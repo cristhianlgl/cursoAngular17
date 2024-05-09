@@ -5,3 +5,13 @@
     <li>{{item}}</li>
   }
 </ul>
+<hr>
+<h2>{{'hola'.repeat(4)}}</h2>
+<img [src]="persona.img" alt="">
+<input type="text" [value]="persona.nombre">
+<button [disabled]="botonActivo" ></button>
+<hr>
+<button (click)="mostarAlerta('hola boton')">Mostrar</button>
+<input type="number" [value]="persona.edad" (change)="cambioNumero($event)">
+<input type="number" [value]="persona.edad" (keydown)="cambioNumero($event)">
+<p>Edad: {{persona.edad}}</p>
