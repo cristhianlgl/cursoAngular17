@@ -8,22 +8,30 @@
         placeholder="Type new todo"
         autofocus
         type="text"
+        (change)="addTaskHandler($event)"
       />
     </div>
   </header>
   <div class="container todoapp-wrapper">
     <!-- This section should be hidden by default and shown when there are todos -->
     <section class="main">
+      <pre>
+        <code>
+          {{ listTasks() | json }}
+        </code>
+      </pre>
       <ul class="todo-list">
+        @for (task of listTasks(); track $index) {
+          <li>
+            <div class="view">
+              <input class="toggle" type="checkbox" [checked]="task.completed" (change)="updateTask($index)"/>
+              <label>{{task.title}}</label>
+              <button class="destroy" (click)="removeTask($index)"></button>
+            </div>
+            <input class="edit" [value]="task" />
+          </li>
+        }
         <li class="completed">
-          <div class="view">
-            <input class="toggle" type="checkbox" checked />
-            <label>Learn JavaScript</label>
-            <button class="destroy"></button>
-          </div>
-          <input class="edit" value="Learn JavaScript" />
-        </li>
-        <li>
           <div class="view">
             <input class="toggle" type="checkbox" />
             <label>Buy a unicorn</label>
@@ -44,7 +52,9 @@
     <!-- This footer should be hidden by default and shown when there are todos -->
     <footer class="footer">
       <!-- This should be `0 items left` by default -->
-      <span class="todo-count"><strong>0</strong> item left</span>
+      <span class="todo-count">
+        <strong>{{listTasks().length}}</strong>  {{listTasks().length <= 1? 'item': 'items'}}
+      </span>
       <!-- Remove this if you don't implement routing -->
       <ul class="filters">
         <li>

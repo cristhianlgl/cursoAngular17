@@ -1,17 +1,25 @@
-<h1>titulo estatico</h1>
-<h2>{{title}}</h2>
-<ul>
-  @for (item of lista; track $index) {
+<div style="padding: 20px 10px;">
+  <h1>titulo estatico</h1>
+  <h2>{{title}}</h2>
+  <ul>
+    @for (item of lista; track $index) {
     <li>{{item}}</li>
-  }
-</ul>
-<hr>
-<h2>{{'hola'.repeat(4)}}</h2>
-<img [src]="persona.img" alt="">
-<input type="text" [value]="persona.nombre">
-<button [disabled]="botonActivo" ></button>
-<hr>
-<button (click)="mostarAlerta('hola boton')">Mostrar</button>
-<input type="number" [value]="persona.edad" (change)="cambioNumero($event)">
-<input type="number" [value]="persona.edad" (keydown)="cambioNumero($event)">
-<p>Edad: {{persona.edad}}</p>
+    }
+  </ul>
+  <hr>
+  <h2>{{'hola'.repeat(4)}}</h2>
+  <img [src]="persona.img" alt="">
+  <input type="text" [value]="persona.nombre">
+  <button [disabled]="botonActivo"></button>
+  <hr>
+  <button (click)="mostarAlerta('hola boton')">Mostrar</button>
+  <input type="number" [value]="persona.edad" (change)="cambioNumero($event)">
+  <input type="number" [value]="persona.edad" (keydown)="cambioNumero($event)">
+  <p>Edad: {{persona.edad}}</p>
+  <hr>
+  <input type="text" [value]="nombreSignal()" (keydown)="cambioNombre($event)">
+  <p>{{nombreSignal()}}</p>
+  <hr>
+  <input type="color" [formControl]="colorControl">
+  <p>{{colorControl.value}}</p>
+</div>
