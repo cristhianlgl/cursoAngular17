@@ -21,34 +21,40 @@ export class HomeComponent {
     ]
   );
 
-  taskControl = new FormControl(
-    ['', [Validators.required, Validators.minLength(3)]]
+  taskControl = new FormControl('',
+    {
+      nonNullable: true,
+      validators: [Validators.required]
+    }
   )
 
-  addTaskHandler(event: Event) {
-    const input = event.target as HTMLInputElement;
-    this.addTask(input.value);
-    input.value = '';
+  addTaskHandler() {
+    const value = this.taskControl.value.trim();
+    if (this.taskControl.invalid || value === '')
+      return;
+
+    this.addTask(value);
+    this.taskControl.setValue('');
   }
 
-  addTask(title:string){
-    const newTask:Task = {
+  addTask(title: string) {
+    const newTask: Task = {
       id: crypto.randomUUID(),
       title: title,
-      completed: false 
+      completed: false
     }
     this.listTasks.update((tasks) => [...tasks, newTask]);
   }
 
-  removeTask(index:number){
-    this.listTasks.update((tasks) => tasks.filter((_,i) => i !== index))
+  removeTask(index: number) {
+    this.listTasks.update((tasks) => tasks.filter((_, i) => i !== index))
   }
 
-  updateTask(indexTask:number){
-    this.listTasks.update(tasks => tasks.map((task,index) => 
-       index === indexTask 
-         ? {...task, completed: !task.completed }
-         : task
+  updateTask(indexTask: number) {
+    this.listTasks.update(tasks => tasks.map((task, index) =>
+      index === indexTask
+        ? { ...task, completed: !task.completed }
+        : task
     ))
   }
 }

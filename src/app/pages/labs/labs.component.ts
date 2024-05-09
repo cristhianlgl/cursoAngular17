@@ -21,6 +21,7 @@ export class LabsComponent {
   }
 
   colorControl = new FormControl();
+  widthControl = new FormControl('50');
 
   constructor() {
     this.colorControl.valueChanges.subscribe(valor => console.log(valor));

@@ -21,5 +21,12 @@
   <p>{{nombreSignal()}}</p>
   <hr>
   <input type="color" [formControl]="colorControl">
-  <p>{{colorControl.value}}</p>
+  <p>color :{{colorControl.value}}</p>
+  <svg>
+    <g>
+      <rect x="0" y="0" width="100" height="100" [attr.fill]="colorControl.value" ></rect>
+    </g>
+  </svg>
+  <input type="number" [formControl]="widthControl">
+  <span class="box" [style.width.px]="widthControl.value" ></span>
 </div>
