@@ -1,5 +1,6 @@
-import { Component, signal } from '@angular/core';
+import { Component, computed, signal, OnInit, effect, inject, Injector } from '@angular/core';
 import { Task } from '../../models/task.model';
+import { FiltersTask } from '../../models/filtersTask.enum';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 
@@ -10,16 +11,22 @@ import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
-export class HomeComponent {
-  listTasks = signal<Task[]>(
-    [
-      {
-        id: crypto.randomUUID(),
-        title: 'task1',
-        completed: false
-      }
-    ]
-  );
+
+export class HomeComponent implements OnInit {
+  listTasks = signal<Task[]>([]);
+  filters = FiltersTask;
+  filterTask = signal<FiltersTask>(FiltersTask.All);
+
+  listTasksFilter = computed(() => {
+    const filter = this.filterTask();
+    const tasks = this.listTasks();
+    const filterMap: Record<FiltersTask, () => Task[]> = {
+      [this.filters.All]: () => tasks,
+      [this.filters.Completed]: () => tasks.filter((task) => task.completed),
+      [this.filters.Pending]: () => tasks.filter((task) => !task.completed),
+    }
+    return filterMap[filter]();
+  })
 
   taskControl = new FormControl('',
     {
@@ -27,6 +34,24 @@ export class HomeComponent {
       validators: [Validators.required]
     }
   )
+  injector = inject(Injector);
+
+  ngOnInit(){
+    const tasksStorage = localStorage.getItem('task');
+    if(!tasksStorage)
+      return
+    const tasks = JSON.parse(tasksStorage);
+    this.listTasks.set(tasks);
+    this.trackTask();
+  }
+
+  trackTask(){
+    effect(() => {
+      const tasks = this.listTasks();
+      localStorage.setItem('task', JSON.stringify(tasks));
+    }, {injector: this.injector})
+  }
+
 
   addTaskHandler() {
     const value = this.taskControl.value.trim();
@@ -46,15 +71,40 @@ export class HomeComponent {
     this.listTasks.update((tasks) => [...tasks, newTask]);
   }
 
-  removeTask(index: number) {
-    this.listTasks.update((tasks) => tasks.filter((_, i) => i !== index))
+  removeTask(id: string) {
+    this.listTasks.update((tasks) => tasks.filter((task) => task.id !== id))
   }
 
-  updateTask(indexTask: number) {
-    this.listTasks.update(tasks => tasks.map((task, index) =>
-      index === indexTask
+  updateTask(id: string) {
+    this.listTasks.update(tasks => tasks.map((task) =>
+      task.id === id
         ? { ...task, completed: !task.completed }
         : task
     ))
   }
+
+  updateStateTask(id: string) {
+    this.listTasks.update(tasks => tasks.map((task) =>
+      task.id === id
+        ? { ...task, editing: true }
+        : { ...task, editing: false }
+    ))
+  }
+
+  updateTitleTask(id: string, event: Event) {
+    const input = event.target as HTMLInputElement;
+    const value = input.value.trim();
+    if (value === '')
+      return;
+    this.listTasks.update(tasks => tasks.map((task) =>
+      task.id === id
+        ? { ...task, editing: false, title: value }
+        : task
+    ))
+  }
+
+  changeFilter(filter: FiltersTask) {
+    this.filterTask.set(filter)
+  }
+
 }

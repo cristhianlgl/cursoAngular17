@@ -3,3 +3,14 @@
     display: block;
     background-color: aqua;
 }
+
+.mensaje-error{
+    background-color: red;
+    color: white;
+    opacity: 0;
+    transition: all ease-in-out .5s;
+}
+
+.mensaje-error.show{
+    opacity: 1;
+}
