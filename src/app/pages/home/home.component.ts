@@ -38,16 +38,17 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(){
     const tasksStorage = localStorage.getItem('task');
-    if(!tasksStorage)
-      return
-    const tasks = JSON.parse(tasksStorage);
-    this.listTasks.set(tasks);
+    if(tasksStorage){
+      const tasks = JSON.parse(tasksStorage);
+      this.listTasks.set(tasks);
+    }
     this.trackTask();
   }
 
   trackTask(){
     effect(() => {
       const tasks = this.listTasks();
+      console.log(tasks);
       localStorage.setItem('task', JSON.stringify(tasks));
     }, {injector: this.injector})
   }
